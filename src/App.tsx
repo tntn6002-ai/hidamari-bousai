@@ -7,6 +7,7 @@ import { Home } from './pages/Home'
 import { Inventory } from './pages/Inventory'
 import { Plan } from './pages/Plan'
 import { Alerts } from './pages/Alerts'
+import { Hazard } from './pages/Hazard'
 import { SignIn } from './pages/auth/SignIn'
 import { Onboarding } from './pages/auth/Onboarding'
 import { REQ, REQ_KEYS } from './lib/constants'
@@ -174,6 +175,9 @@ function AppInner() {
       )}
       {tab === 'alert' && (
         <Alerts bases={bases} items={items} openAdd={openAdd} onReset={onReset} />
+      )}
+      {tab === 'hazard' && (
+        <Hazard bases={bases} onUpdateBase={onUpdateBase} />
       )}
       {draft && (
         <ItemForm draft={draft} setDraft={setDraft} bases={bases} onSave={saveDraft} />

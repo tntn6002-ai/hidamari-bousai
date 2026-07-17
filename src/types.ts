@@ -8,6 +8,10 @@ export interface Base {
   dogs: number
   days: number
   interruptSwitch?: string
+  lat?: number | null
+  lon?: number | null
+  floor?: number | null
+  baseType?: 'home' | 'work' | null
 }
 
 export interface Item {
@@ -34,4 +38,4 @@ export interface ItemDraft {
   url: string
 }
 
-export type TabId = 'home' | 'inv' | 'plan' | 'alert'
+export type TabId = 'home' | 'inv' | 'plan' | 'alert' | 'hazard'

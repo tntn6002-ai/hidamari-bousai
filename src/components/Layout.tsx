@@ -1,18 +1,20 @@
-import { Sun, Home, Package, ClipboardList, Bell } from 'lucide-react'
+import { Sun, Home, Package, ClipboardList, Bell, Map } from 'lucide-react'
 import type { TabId } from '../types'
 
 const NAV_ITEMS: { id: TabId; label: string; Icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
-  { id: 'home',  label: 'ホーム',     Icon: Home },
-  { id: 'inv',   label: '在庫',       Icon: Package },
-  { id: 'plan',  label: '計画',       Icon: ClipboardList },
-  { id: 'alert', label: 'アラート',   Icon: Bell },
+  { id: 'home',   label: 'ホーム',     Icon: Home },
+  { id: 'inv',    label: '在庫',       Icon: Package },
+  { id: 'plan',   label: '計画',       Icon: ClipboardList },
+  { id: 'alert',  label: 'アラート',   Icon: Bell },
+  { id: 'hazard', label: 'ハザード',   Icon: Map },
 ]
 
 const PAGE_TITLE: Record<TabId, string> = {
-  home:  'ホーム',
-  inv:   '在庫管理',
-  plan:  '備蓄計画',
-  alert: 'アラート',
+  home:   'ホーム',
+  inv:    '在庫管理',
+  plan:   '備蓄計画',
+  alert:  'アラート',
+  hazard: 'ハザード確認',
 }
 
 interface LayoutProps {
@@ -114,7 +116,7 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
 
       {/* ── Mobile/tablet bottom nav ── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-orange-100 safe-area-inset-bottom">
-        <div className="grid grid-cols-4 max-w-2xl mx-auto">
+        <div className="grid grid-cols-5 max-w-2xl mx-auto">
           {NAV_ITEMS.map(({ id, label, Icon }) => (
             <button
               key={id}

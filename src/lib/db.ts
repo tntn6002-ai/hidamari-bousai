@@ -12,6 +12,10 @@ export function dbToBase(row: Record<string, unknown>): Base {
     dogs: row.dogs as number,
     days: row.target_days as number,
     interruptSwitch: (row.interrupt_switch as string) || '',
+    lat: row.lat != null ? Number(row.lat) : null,
+    lon: row.lon != null ? Number(row.lon) : null,
+    floor: row.floor != null ? Number(row.floor) : null,
+    baseType: (row.base_type as 'home' | 'work') || 'home',
   }
 }
 
@@ -24,6 +28,10 @@ function baseToDb(base: Partial<Base>, householdId?: string) {
     ...(base.dogs !== undefined && { dogs: base.dogs }),
     ...(base.days !== undefined && { target_days: base.days }),
     ...(base.interruptSwitch !== undefined && { interrupt_switch: base.interruptSwitch }),
+    ...(base.lat !== undefined && { lat: base.lat }),
+    ...(base.lon !== undefined && { lon: base.lon }),
+    ...(base.floor !== undefined && { floor: base.floor }),
+    ...(base.baseType !== undefined && { base_type: base.baseType }),
   }
 }
 
