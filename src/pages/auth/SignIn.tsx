@@ -17,8 +17,9 @@ export function SignIn() {
     try {
       await signIn(email.trim())
       setSent(true)
-    } catch {
-      setError('送信に失敗しました。メールアドレスを確認してもう一度お試しください。')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(`送信に失敗しました: ${msg}`)
     } finally {
       setLoading(false)
     }
