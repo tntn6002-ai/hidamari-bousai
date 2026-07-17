@@ -18,8 +18,8 @@ export function SignIn() {
       await signIn(email.trim())
       setSent(true)
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e)
-      setError(`送信に失敗しました: ${msg}`)
+      const msg = e instanceof Error ? e.message : JSON.stringify(e)
+      setError(msg || '不明なエラー')
     } finally {
       setLoading(false)
     }
