@@ -1,4 +1,5 @@
-import { Plus, Minus, Check, ExternalLink } from 'lucide-react'
+import { useState } from 'react'
+import { Plus, Minus, Check, ExternalLink, Building2, Home } from 'lucide-react'
 import { REQ, REQ_KEYS, REQ_GROUPS } from '../lib/constants'
 import { dailyNeed, requiredQty, stockOf, amazonSearch } from '../lib/calculations'
 import { ChecklistSection } from '../components/ChecklistSection'
@@ -10,13 +11,33 @@ interface PlanProps {
   planBase: string
   setPlanBase: (id: string) => void
   onUpdateBase: (id: string, patch: Partial<Base>) => void
+  onAddBase: (name: string, baseType: 'home' | 'work', adults: number, days: number) => Promise<void>
   openAdd: (preset?: Partial<ItemDraft>) => void
 }
 
-export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, openAdd }: PlanProps) {
+export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, onAddBase, openAdd }: PlanProps) {
+  const [showAddBase, setShowAddBase] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newType, setNewType] = useState<'home' | 'work'>('work')
+  const [newAdults, setNewAdults] = useState(1)
+  const [newDays, setNewDays] = useState(3)
+  const [adding, setAdding] = useState(false)
+
   const b = bases.find(x => x.id === planBase) || bases[0]
 
   const updateBase = (patch: Partial<Base>) => onUpdateBase(b.id, patch)
+
+  const handleAddBase = async () => {
+    if (!newName.trim()) return
+    setAdding(true)
+    await onAddBase(newName.trim(), newType, newAdults, newDays)
+    setAdding(false)
+    setShowAddBase(false)
+    setNewName('')
+    setNewType('work')
+    setNewAdults(1)
+    setNewDays(3)
+  }
 
   if (!b) return null
 
@@ -38,7 +59,91 @@ export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, openAd
             {x.name}
           </button>
         ))}
+        <button
+          onClick={() => setShowAddBase(v => !v)}
+          className="px-3 py-1.5 rounded-full text-xs whitespace-nowrap border shrink-0 bg-white border-orange-200 text-amber-600 hover:border-amber-300 font-semibold flex items-center gap-1"
+        >
+          <Plus size={11} /> 拠点を追加
+        </button>
       </div>
+
+      {/* Add base form */}
+      {showAddBase && (
+        <section className="bg-amber-50 rounded-2xl border border-amber-200 p-4 space-y-3">
+          <h3 className="font-bold text-sm">新しい拠点を追加</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="text-xs text-stone-500 sm:col-span-2">
+              拠点名
+              <input
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                placeholder="例：次女の職場、次女夫の職場"
+                className="mt-1 w-full px-3 py-2 rounded-xl border border-orange-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 bg-white"
+              />
+            </label>
+            <div className="text-xs text-stone-500">
+              種別
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setNewType('work')}
+                  className={`flex-1 py-2 rounded-xl text-sm font-bold border flex items-center justify-center gap-1 transition-colors ${newType === 'work' ? 'bg-amber-400 border-amber-400 text-white' : 'bg-white border-orange-200 text-stone-500'}`}
+                >
+                  <Building2 size={13} /> 職場
+                </button>
+                <button
+                  onClick={() => setNewType('home')}
+                  className={`flex-1 py-2 rounded-xl text-sm font-bold border flex items-center justify-center gap-1 transition-colors ${newType === 'home' ? 'bg-amber-400 border-amber-400 text-white' : 'bg-white border-orange-200 text-stone-500'}`}
+                >
+                  <Home size={13} /> 住居
+                </button>
+              </div>
+            </div>
+            <div className="text-xs text-stone-500">
+              備蓄目標
+              <div className="flex gap-2 mt-1">
+                {([3, 7, 14] as const).map(d => (
+                  <button
+                    key={d}
+                    onClick={() => setNewDays(d)}
+                    className={`flex-1 py-2 rounded-xl text-sm font-bold border transition-colors ${newDays === d ? 'bg-amber-400 border-amber-400 text-white' : 'bg-white border-orange-200 text-stone-500'}`}
+                  >
+                    {d === 3 ? '3日' : d === 7 ? '1週間' : '2週間'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {newType === 'home' && (
+              <div className="text-xs text-stone-500 sm:col-span-2">
+                大人の人数
+                <div className="flex items-center gap-2 mt-1">
+                  <button onClick={() => setNewAdults(Math.max(1, newAdults - 1))} className="w-8 h-8 rounded-full bg-white border border-orange-200 flex items-center justify-center">
+                    <Minus size={14} />
+                  </button>
+                  <span className="w-8 text-center font-bold text-lg">{newAdults}</span>
+                  <button onClick={() => setNewAdults(newAdults + 1)} className="w-8 h-8 rounded-full bg-white border border-orange-200 flex items-center justify-center">
+                    <Plus size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowAddBase(false)}
+              className="flex-1 py-2.5 rounded-xl border border-orange-200 text-sm text-stone-500 font-bold"
+            >
+              キャンセル
+            </button>
+            <button
+              onClick={handleAddBase}
+              disabled={!newName.trim() || adding}
+              className="flex-1 py-2.5 rounded-xl bg-amber-400 text-white text-sm font-bold disabled:bg-stone-200 disabled:text-stone-400 hover:bg-amber-500 transition-colors"
+            >
+              {adding ? '追加中…' : '追加する'}
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* World settings card */}
       <section className="bg-white rounded-2xl shadow-sm border border-orange-100 p-4 space-y-4">

@@ -14,7 +14,7 @@ import { REQ, REQ_KEYS } from './lib/constants'
 import { daysUntil, requiredQty, stockOf } from './lib/calculations'
 import {
   fetchBases, fetchItems,
-  patchBase, insertItem, patchItem, removeItem,
+  patchBase, insertBase, insertItem, patchItem, removeItem,
 } from './lib/db'
 import type { Base, Item, ItemDraft, TabId, ReqKey } from './types'
 
@@ -79,6 +79,17 @@ function AppInner() {
     } catch {
       setSaveState('error')
     }
+  }
+
+  // 拠点追加
+  const onAddBase = async (name: string, baseType: 'home' | 'work', adults: number, days: number) => {
+    if (!household) return
+    const newBase: Omit<Base, 'id'> = { name, tag: '', adults, dogs: 0, days, baseType }
+    await withSave(async () => {
+      const created = await insertBase(newBase, household.id)
+      setBases(prev => [...prev, created])
+      setPlanBase(created.id)
+    })
   }
 
   // 拠点更新
@@ -170,7 +181,7 @@ function AppInner() {
         <Plan
           bases={bases} items={items}
           planBase={planBase || bases[0]?.id || ''} setPlanBase={setPlanBase}
-          onUpdateBase={onUpdateBase} openAdd={openAdd}
+          onUpdateBase={onUpdateBase} onAddBase={onAddBase} openAdd={openAdd}
         />
       )}
       {tab === 'alert' && (
