@@ -1,4 +1,17 @@
-export type ReqKey = 'water' | 'food' | 'toilet' | 'gas' | 'dogfood' | 'sheets'
+export type ReqKey =
+  | 'water'
+  | 'food'
+  | 'canned'
+  | 'fruit_can'
+  | 'retort'
+  | 'veg_juice'
+  | 'snack'
+  | 'supplement'
+  | 'health_drink'
+  | 'toilet'
+  | 'gas'
+  | 'dogfood'
+  | 'sheets'
 
 export interface Base {
   id: string

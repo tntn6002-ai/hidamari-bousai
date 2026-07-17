@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { REQ, REQ_KEYS } from '../lib/constants'
+import { REQ, REQ_KEYS, REQ_GROUPS } from '../lib/constants'
 import { todayStr } from '../lib/calculations'
 import type { Base, ItemDraft, ReqKey } from '../types'
 
@@ -59,8 +59,12 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
               onChange={e => set({ reqKey: e.target.value as ReqKey | 'other' })}
               className="mt-1 w-full px-3 py-2.5 rounded-xl border border-orange-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300"
             >
-              {REQ_KEYS.map(k => (
-                <option key={k} value={k}>{REQ[k].label}（{REQ[k].unit}）</option>
+                {REQ_GROUPS.map(group => (
+                <optgroup key={group.id} label={group.label}>
+                  {REQ_KEYS.filter(k => REQ[k].group === group.id).map(k => (
+                    <option key={k} value={k}>{REQ[k].label}（{REQ[k].unit}）</option>
+                  ))}
+                </optgroup>
               ))}
               <option value="other">その他（計算対象外）</option>
             </select>

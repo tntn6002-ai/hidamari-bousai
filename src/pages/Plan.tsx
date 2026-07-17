@@ -1,5 +1,5 @@
 import { Plus, Minus, Check, ExternalLink } from 'lucide-react'
-import { REQ, REQ_KEYS } from '../lib/constants'
+import { REQ, REQ_KEYS, REQ_GROUPS } from '../lib/constants'
 import { dailyNeed, requiredQty, stockOf, amazonSearch } from '../lib/calculations'
 import type { Base, Item, ItemDraft, ReqKey } from '../types'
 
@@ -127,58 +127,69 @@ export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, openAd
         </div>
       </section>
 
-      {/* Items needed vs have */}
-      <section className="bg-white rounded-2xl shadow-sm border border-orange-100 divide-y divide-orange-50">
-        {REQ_KEYS.filter(k => dailyNeed(b, k) > 0).map(k => {
-          const need = requiredQty(b, k as ReqKey)
-          const have = stockOf(items, b.id, k as ReqKey)
-          const lack = Math.max(0, need - have)
-
-          return (
-            <div key={k} className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold">{REQ[k].label}</span>
-                <span className="text-xs text-stone-500 tabular-nums">
-                  必要 {need}{REQ[k].unit} / 在庫 {have}{REQ[k].unit}
-                </span>
-              </div>
-              <div className="h-2 rounded-full bg-stone-100 overflow-hidden mb-2">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    lack === 0 ? 'bg-emerald-500' : have / need >= 0.5 ? 'bg-amber-400' : 'bg-red-400'
-                  }`}
-                  style={{ width: `${Math.min(100, need > 0 ? (have / need) * 100 : 100)}%` }}
-                />
-              </div>
-              {lack > 0 ? (
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs text-red-500 font-semibold">あと {lack}{REQ[k].unit} 不足</span>
-                  <div className="flex gap-2">
-                    <a
-                      href={amazonSearch(REQ[k].q)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-amber-700 font-semibold flex items-center gap-1 hover:bg-orange-100 transition-colors"
-                    >
-                      <ExternalLink size={11} /> Amazon
-                    </a>
-                    <button
-                      onClick={() => openAdd({ baseId: b.id, reqKey: k as ReqKey, name: REQ[k].label, qty: lack })}
-                      className="text-[11px] px-2.5 py-1.5 rounded-lg bg-amber-400 text-white font-semibold flex items-center gap-1 hover:bg-amber-500 transition-colors"
-                    >
-                      <Plus size={11} /> 在庫に登録
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                  <Check size={12} /> 充足しています
-                </span>
-              )}
+      {/* Items by group */}
+      {REQ_GROUPS.map(group => {
+        const groupKeys = REQ_KEYS.filter(k => REQ[k].group === group.id && dailyNeed(b, k) > 0)
+        if (groupKeys.length === 0) return null
+        return (
+          <section key={group.id} className="bg-white rounded-2xl shadow-sm border border-orange-100">
+            <div className="px-4 pt-3 pb-1 border-b border-orange-50">
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wide">{group.label}</h3>
             </div>
-          )
-        })}
-      </section>
+            <div className="divide-y divide-orange-50">
+              {groupKeys.map(k => {
+                const need = requiredQty(b, k as ReqKey)
+                const have = stockOf(items, b.id, k as ReqKey)
+                const lack = Math.max(0, need - have)
+
+                return (
+                  <div key={k} className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold">{REQ[k].label}</span>
+                      <span className="text-xs text-stone-500 tabular-nums">
+                        目安 {need}{REQ[k].unit} / 在庫 {have}{REQ[k].unit}
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-stone-100 overflow-hidden mb-2">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          lack === 0 ? 'bg-emerald-500' : have / need >= 0.5 ? 'bg-amber-400' : 'bg-red-400'
+                        }`}
+                        style={{ width: `${Math.min(100, need > 0 ? (have / need) * 100 : 100)}%` }}
+                      />
+                    </div>
+                    {lack > 0 ? (
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <span className="text-xs text-red-500 font-semibold">あと {lack}{REQ[k].unit} 不足</span>
+                        <div className="flex gap-2">
+                          <a
+                            href={amazonSearch(REQ[k].q)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-amber-700 font-semibold flex items-center gap-1 hover:bg-orange-100 transition-colors"
+                          >
+                            <ExternalLink size={11} /> Amazon
+                          </a>
+                          <button
+                            onClick={() => openAdd({ baseId: b.id, reqKey: k as ReqKey, name: REQ[k].label, qty: lack })}
+                            className="text-[11px] px-2.5 py-1.5 rounded-lg bg-amber-400 text-white font-semibold flex items-center gap-1 hover:bg-amber-500 transition-colors"
+                          >
+                            <Plus size={11} /> 在庫に登録
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                        <Check size={12} /> 充足しています
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )
+      })}
     </div>
   )
 }
