@@ -35,6 +35,9 @@ export function SignIn() {
           </div>
           <h1 className="text-2xl font-bold text-stone-800">ひだまり防災ボード</h1>
           <p className="text-sm text-stone-500 mt-1">家族の在宅避難を支える防災アプリ</p>
+          <p className="text-[10px] text-stone-300 mt-1 break-all">
+            URL: {import.meta.env.VITE_SUPABASE_URL || '未設定'}
+          </p>
         </div>
 
         {!sent ? (
