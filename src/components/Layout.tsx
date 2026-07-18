@@ -1,4 +1,6 @@
-import { Sun, Home, Package, ClipboardList, Bell, Map } from 'lucide-react'
+import { useState } from 'react'
+import { Sun, Home, Package, ClipboardList, Bell, Map, UserPlus } from 'lucide-react'
+import { InviteModal } from './InviteModal'
 import type { TabId } from '../types'
 
 const NAV_ITEMS: { id: TabId; label: string; Icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
@@ -26,6 +28,7 @@ interface LayoutProps {
 }
 
 export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutProps) {
+  const [showInvite, setShowInvite] = useState(false)
   return (
     <div className="min-h-screen bg-orange-50 text-stone-800">
 
@@ -71,6 +74,12 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
         </nav>
 
         <div className="px-5 py-4 border-t border-orange-100">
+          <button
+            onClick={() => setShowInvite(true)}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-stone-500 hover:bg-orange-50 hover:text-amber-600 transition-colors mb-2"
+          >
+            <UserPlus size={15} /> 招待する
+          </button>
           <p className="text-[10px] text-stone-400 leading-relaxed">
             ※ハザード表示は公的データの再表示。最終確認は各自治体の公式資料で。
           </p>
@@ -94,9 +103,14 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
               </div>
               <h1 className="font-bold text-base leading-tight">ひだまり防災ボード</h1>
             </div>
-            <span className="text-xs text-stone-400 tabular-nums">
-              {saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : saveState === 'error' ? '保存エラー' : ''}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-stone-400 tabular-nums">
+                {saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : saveState === 'error' ? '保存エラー' : ''}
+              </span>
+              <button onClick={() => setShowInvite(true)} className="p-1.5 rounded-lg text-stone-400 hover:text-amber-500 hover:bg-orange-50">
+                <UserPlus size={18} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -113,6 +127,8 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
           {children}
         </main>
       </div>
+
+      {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
 
       {/* ── Mobile/tablet bottom nav ── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-orange-100 safe-area-inset-bottom">

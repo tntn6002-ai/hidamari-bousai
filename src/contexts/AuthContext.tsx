@@ -27,6 +27,7 @@ interface AuthContextValue {
   createHousehold: (householdName: string, displayName: string) => Promise<void>
   joinHousehold: (token: string, displayName: string) => Promise<void>
   refreshMember: () => Promise<void>
+  generateInvite: () => Promise<string>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -150,8 +151,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (user) await fetchMember(user.id)
   }
 
+  const generateInvite = async (): Promise<string> => {
+    if (!household) throw new Error('No household')
+    const token = crypto.randomUUID()
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const { error } = await supabase
+      .from('invitations')
+      .insert({ household_id: household.id, token, expires_at: expiresAt })
+    if (error) throw error
+    return token
+  }
+
   return (
-    <AuthContext.Provider value={{ user, session, member, household, loading, signIn, signOut, createHousehold, joinHousehold, refreshMember }}>
+    <AuthContext.Provider value={{ user, session, member, household, loading, signIn, signOut, createHousehold, joinHousehold, refreshMember, generateInvite }}>
       {children}
     </AuthContext.Provider>
   )

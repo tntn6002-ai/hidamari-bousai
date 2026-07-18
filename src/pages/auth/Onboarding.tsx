@@ -4,12 +4,18 @@ import { useAuth } from '../../contexts/AuthContext'
 
 type Mode = 'choose' | 'create' | 'join'
 
+function getInviteFromUrl(): string {
+  const params = new URLSearchParams(window.location.search)
+  return params.get('invite') ?? ''
+}
+
 export function Onboarding() {
   const { user, createHousehold, joinHousehold, signOut } = useAuth()
-  const [mode, setMode] = useState<Mode>('choose')
+  const inviteFromUrl = getInviteFromUrl()
+  const [mode, setMode] = useState<Mode>(inviteFromUrl ? 'join' : 'choose')
   const [displayName, setDisplayName] = useState('')
   const [householdName, setHouseholdName] = useState('')
-  const [inviteToken, setInviteToken] = useState('')
+  const [inviteToken, setInviteToken] = useState(inviteFromUrl)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
