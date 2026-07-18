@@ -3,6 +3,7 @@ import { Plus, Minus, Check, ExternalLink, Building2, Home } from 'lucide-react'
 import { REQ, REQ_KEYS, REQ_GROUPS } from '../lib/constants'
 import { dailyNeed, requiredQty, stockOf, amazonSearch } from '../lib/calculations'
 import { ChecklistSection } from '../components/ChecklistSection'
+import { WorkInfoSection } from '../components/WorkInfoSection'
 import type { Base, Item, ItemDraft, ReqKey } from '../types'
 
 interface PlanProps {
@@ -297,7 +298,10 @@ export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, onAddB
         )
       })}
 
-      <ChecklistSection baseId={b.id} />
+      {b.baseType === 'work'
+        ? <WorkInfoSection base={b} onUpdate={updateBase} />
+        : <ChecklistSection baseId={b.id} />
+      }
     </div>
   )
 }

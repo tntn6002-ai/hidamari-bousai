@@ -25,6 +25,11 @@ export interface Base {
   lon?: number | null
   floor?: number | null
   baseType?: 'home' | 'work' | null
+  station?: string | null
+  commuteNormal?: string | null
+  commuteAlt?: string | null
+  commuteWalk?: string | null
+  stayPolicy?: string | null
 }
 
 export interface Item {

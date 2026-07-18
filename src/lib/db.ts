@@ -16,6 +16,11 @@ export function dbToBase(row: Record<string, unknown>): Base {
     lon: row.lon != null ? Number(row.lon) : null,
     floor: row.floor != null ? Number(row.floor) : null,
     baseType: (row.base_type as 'home' | 'work') || 'home',
+    station: (row.station as string) || null,
+    commuteNormal: (row.commute_normal as string) || null,
+    commuteAlt: (row.commute_alt as string) || null,
+    commuteWalk: (row.commute_walk as string) || null,
+    stayPolicy: (row.stay_policy as string) || null,
   }
 }
 
@@ -32,6 +37,11 @@ function baseToDb(base: Partial<Base>, householdId?: string) {
     ...(base.lon !== undefined && { lon: base.lon }),
     ...(base.floor !== undefined && { floor: base.floor }),
     ...(base.baseType !== undefined && { base_type: base.baseType }),
+    ...(base.station !== undefined && { station: base.station }),
+    ...(base.commuteNormal !== undefined && { commute_normal: base.commuteNormal }),
+    ...(base.commuteAlt !== undefined && { commute_alt: base.commuteAlt }),
+    ...(base.commuteWalk !== undefined && { commute_walk: base.commuteWalk }),
+    ...(base.stayPolicy !== undefined && { stay_policy: base.stayPolicy }),
   }
 }
 
