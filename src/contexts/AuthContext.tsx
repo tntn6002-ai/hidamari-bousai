@@ -133,16 +133,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .maybeSingle()
     if (iErr || !invite) throw new Error('招待リンクが無効か期限切れです')
 
-    const { data: mData, error: mErr } = await supabase
+    // INSERT時に .select() を連結すると RETURNING の RLS 評価で my_household_id() が
+    // まだ自分のメンバー行を見られず 0 行になり失敗する（createHousehold と同じ循環依存）。
+    // 行を作ってから改めて SELECT する。
+    const { error: mErr } = await supabase
       .from('members')
       .insert({ household_id: invite.household_id, user_id: user.id, display_name: displayName, role: 'member' })
-      .select()
-      .single()
-    if (mErr || !mData) throw mErr ?? new Error('参加に失敗しました')
+    if (mErr) throw mErr
 
     await supabase.from('invitations').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
 
+    // メンバー作成後はRLSが通るので改めてSELECT
+    const { data: mData } = await supabase.from('members').select('*').eq('user_id', user.id).single()
     const { data: hData } = await supabase.from('households').select('*').eq('id', invite.household_id).single()
+    if (!mData || !hData) throw new Error('参加に失敗しました')
     setHousehold(hData)
     setMember(mData)
   }
