@@ -82,9 +82,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signIn = async (email: string) => {
+    // ログイン後は現在のURL（?invite=... を含む）へ戻す。
+    // これで招待リンク経由でも招待トークンが失われず、
+    // 認証後にコードを手入力しなくても参加フローへ進める。
+    const redirectTo = window.location.origin + window.location.pathname + window.location.search
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: redirectTo },
     })
     if (error) throw error
   }
