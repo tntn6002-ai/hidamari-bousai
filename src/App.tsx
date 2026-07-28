@@ -20,7 +20,7 @@ import type { Base, Item, ItemDraft, TabId, ReqKey } from './types'
 
 function Loading({ label = '読み込み中…' }: { label?: string }) {
   return (
-    <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+    <div className="min-h-screen bg-[#FBF0DA] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <Sun size={40} className="text-amber-400" style={{ animation: 'spin 3s linear infinite' }} />
         <p className="text-sm text-stone-500">{label}</p>

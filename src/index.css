@@ -3,6 +3,7 @@
 @layer base {
   body {
     margin: 0;
+    background: #FBF0DA;
     font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
       'Yu Gothic', sans-serif;
     -webkit-font-smoothing: antialiased;

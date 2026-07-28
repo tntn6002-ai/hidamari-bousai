@@ -30,7 +30,7 @@ interface LayoutProps {
 export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutProps) {
   const [showInvite, setShowInvite] = useState(false)
   return (
-    <div className="min-h-screen bg-orange-50 text-stone-800">
+    <div className="min-h-screen bg-[#FBF0DA] text-stone-800">
 
       {/* ── Desktop sidebar ── */}
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-56 bg-white border-r border-orange-100 flex-col z-20 shadow-sm">

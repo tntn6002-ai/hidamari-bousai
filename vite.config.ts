@@ -12,10 +12,10 @@ export default defineConfig({
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'ひだまり防災ボード',
-        short_name: 'ひだまり',
+        short_name: 'ひだまりの防災',
         description: '家族の在宅避難を支える防災PWA',
         theme_color: '#fbbf24',
-        background_color: '#fff7ed',
+        background_color: '#FBF0DA',
         display: 'standalone',
         lang: 'ja',
         orientation: 'any',
