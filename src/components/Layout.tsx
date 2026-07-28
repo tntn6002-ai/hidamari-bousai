@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sun, Home, Package, ClipboardList, Bell, Map, UserPlus } from 'lucide-react'
+import { Home, Package, ClipboardList, Bell, Map, UserPlus } from 'lucide-react'
 import { InviteModal } from './InviteModal'
 import type { TabId } from '../types'
 
@@ -35,9 +35,7 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
       {/* ── Desktop sidebar ── */}
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-56 bg-white border-r border-orange-100 flex-col z-20 shadow-sm">
         <div className="px-5 py-5 border-b border-orange-100 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center shadow-sm shrink-0">
-            <Sun size={20} className="text-white" />
-          </div>
+          <img src="/pwa-192x192.png" alt="ひだまりの防災" className="w-10 h-10 shrink-0" />
           <div className="min-w-0">
             <h1 className="font-bold text-sm leading-tight">ひだまり防災ボード</h1>
             <p className="text-[10px] text-stone-400 leading-tight mt-0.5">在宅避難のための見える化</p>
@@ -98,9 +96,7 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
         <header className="lg:hidden sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-orange-100">
           <div className="px-4 py-3 flex items-center justify-between max-w-2xl mx-auto">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center shadow-sm">
-                <Sun size={16} className="text-white" />
-              </div>
+              <img src="/pwa-192x192.png" alt="ひだまりの防災" className="w-8 h-8" />
               <h1 className="font-bold text-base leading-tight">ひだまり防災ボード</h1>
             </div>
             <div className="flex items-center gap-2">
