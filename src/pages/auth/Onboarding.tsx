@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sun, Home, Users, LogOut } from 'lucide-react'
+import { Home, Users, LogOut } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 type Mode = 'choose' | 'create' | 'join'
@@ -52,9 +52,7 @@ export function Onboarding() {
       <div className="w-full max-w-sm">
 
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-amber-400 flex items-center justify-center mx-auto mb-4 shadow-md">
-            <Sun size={32} className="text-white" />
-          </div>
+          <img src="/pwa-192x192.png" alt="ひだまりの防災" className="w-20 h-20 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-stone-800">ようこそ</h1>
           <p className="text-xs text-stone-500 mt-1">{user?.email}</p>
         </div>

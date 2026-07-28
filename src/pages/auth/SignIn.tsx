@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sun, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 export function SignIn() {
@@ -30,9 +30,7 @@ export function SignIn() {
       <div className="w-full max-w-sm">
 
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-amber-400 flex items-center justify-center mx-auto mb-4 shadow-md">
-            <Sun size={32} className="text-white" />
-          </div>
+          <img src="/pwa-192x192.png" alt="ひだまりの防災" className="w-20 h-20 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-stone-800">ひだまり防災ボード</h1>
           <p className="text-sm text-stone-500 mt-1">家族の在宅避難を支える防災アプリ</p>
         </div>
