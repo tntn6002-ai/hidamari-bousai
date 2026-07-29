@@ -168,6 +168,14 @@
   }
   .url:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
 
+  /* ── Install (home screen) ── */
+  .devices { display: flex; flex-direction: column; gap: 13px; margin: 0; padding: 0; list-style: none; }
+  .dev { display: grid; grid-template-columns: 96px 1fr; gap: 3px 12px; align-items: baseline; }
+  .dev b { font-family: var(--display); font-weight: 800; font-size: .92rem; color: var(--sun-deep); }
+  .dev span { font-size: .9rem; color: var(--ink-soft); line-height: 1.55; }
+  .dev strong { color: var(--ink); font-weight: 800; }
+  .note { margin: 16px 0 0; font-size: .82rem; color: var(--muted); line-height: 1.65; }
+
   /* ── Features ── */
   .features { display: flex; flex-direction: column; gap: 2px; }
   .feat { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 14px 4px; }
@@ -250,6 +258,17 @@
         <p>「新しい世帯を作る」を選んで、名前を入れるだけ。あとは家の備蓄を登録していきます。</p>
       </li>
     </ol>
+  </section>
+
+  <section class="card">
+    <p class="label">INSTALL</p>
+    <h2 class="title">ホーム画面に置けば、アプリみたいに</h2>
+    <ul class="devices">
+      <li class="dev"><b>iPhone / iPad</b><span>Safariで開き、共有ボタンから <strong>「ホーム画面に追加」</strong></span></li>
+      <li class="dev"><b>Android</b><span>Chromeのメニュー（⋮）から <strong>「アプリをインストール」</strong></span></li>
+      <li class="dev"><b>Mac</b><span>Safariの「ファイル」→ <strong>「Dockに追加」</strong></span></li>
+    </ul>
+    <p class="note">太陽アイコンをタップするだけで起動。ログイン状態も保たれます。※ 先に「今すぐ開く」でアプリを開いてから追加すると、アイコンがアプリを起動します。</p>
   </section>
 
   <section class="card features">
