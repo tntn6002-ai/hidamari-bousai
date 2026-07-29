@@ -143,11 +143,9 @@ export async function removeItem(id: string): Promise<void> {
 // ── 初期拠点を世帯作成時に投入 ─────────────────────────────
 
 export async function insertSeedBases(householdId: string): Promise<Base[]> {
+  // 個人情報を含めない中立的な初期拠点。新規世帯が最初に編集する雛形として1件だけ用意する。
   const seeds = [
-    { label: '関西の自宅',  tag: '戸建て・犬1',    adults: 2, dogs: 1, target_days: 14, kind: 'home', household_id: householdId },
-    { label: '長女宅',      tag: '東京・2階',       adults: 1, dogs: 0, target_days: 7,  kind: 'home', household_id: householdId },
-    { label: '次女宅',      tag: '東京・2階・犬1',  adults: 2, dogs: 1, target_days: 7,  kind: 'home', household_id: householdId },
-    { label: '三女宅',      tag: '川崎・1階',       adults: 2, dogs: 0, target_days: 7,  kind: 'home', household_id: householdId },
+    { label: '自宅', tag: '', adults: 1, dogs: 0, target_days: 7, kind: 'home', household_id: householdId },
   ]
   const { data, error } = await supabase.from('bases').insert(seeds).select()
   if (error) throw error

@@ -128,28 +128,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const joinHousehold = async (token: string, displayName: string) => {
     if (!user) throw new Error('Not authenticated')
 
-    const { data: invite, error: iErr } = await supabase
-      .from('invitations')
-      .select('*')
-      .eq('token', token.trim())
-      .is('used_at', null)
-      .gt('expires_at', new Date().toISOString())
-      .maybeSingle()
-    if (iErr || !invite) throw new Error('招待リンクが無効か期限切れです')
+    // 招待の検証・メンバー登録・使用済み化はサーバー側の関数（redeem_invite）で行う。
+    // これによりクライアントが invitations テーブルを直接読む必要がなくなり、
+    // 他世帯の招待トークン一覧が覗ける状態を解消する。
+    const { data: householdId, error } = await supabase.rpc('redeem_invite', {
+      invite_token: token.trim(),
+      display_name: displayName,
+    })
+    if (error || !householdId) throw new Error('招待リンクが無効か期限切れです')
 
-    // INSERT時に .select() を連結すると RETURNING の RLS 評価で my_household_id() が
-    // まだ自分のメンバー行を見られず 0 行になり失敗する（createHousehold と同じ循環依存）。
-    // 行を作ってから改めて SELECT する。
-    const { error: mErr } = await supabase
-      .from('members')
-      .insert({ household_id: invite.household_id, user_id: user.id, display_name: displayName, role: 'member' })
-    if (mErr) throw mErr
-
-    await supabase.from('invitations').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
-
-    // メンバー作成後はRLSが通るので改めてSELECT
     const { data: mData } = await supabase.from('members').select('*').eq('user_id', user.id).single()
-    const { data: hData } = await supabase.from('households').select('*').eq('id', invite.household_id).single()
+    const { data: hData } = await supabase.from('households').select('*').eq('id', householdId).single()
     if (!mData || !hData) throw new Error('参加に失敗しました')
     setHousehold(hData)
     setMember(mData)
