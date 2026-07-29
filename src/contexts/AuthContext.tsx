@@ -100,26 +100,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const createHousehold = async (householdName: string, displayName: string) => {
     if (!user) throw new Error('Not authenticated')
 
-    // UUIDをクライアント側で生成してINSERT後のSELECTを回避（RLS循環依存の解消）
-    const householdId = crypto.randomUUID()
-
-    const { error: hErr } = await supabase
-      .from('households')
-      .insert({ id: householdId, name: householdName })
-    if (hErr) throw hErr
-
-    const { error: mErr } = await supabase
-      .from('members')
-      .insert({ household_id: householdId, user_id: user.id, display_name: displayName, role: 'owner' })
-    if (mErr) throw mErr
-
-    // メンバー作成後はRLSが通るので改めてSELECT
-    const { data: hData } = await supabase.from('households').select('*').eq('id', householdId).single()
-    const { data: mData } = await supabase.from('members').select('*').eq('user_id', user.id).single()
-    if (!hData || !mData) throw new Error('データの取得に失敗しました')
+    // 世帯作成＋オーナー登録はサーバー側関数で原子的に行う。
+    // members/households へのクライアント直接INSERTを廃止し、
+    // 権限昇格や招待なしでの他世帯参加の余地をなくす。
+    const { data: householdId, error } = await supabase.rpc('create_household', {
+      household_name: householdName,
+      display_name: displayName,
+    })
+    if (error || !householdId) throw error ?? new Error('作成に失敗しました')
 
     // 初期拠点を投入（エラーは無視して続行）
     await insertSeedBases(householdId).catch(() => {})
+
+    const { data: hData } = await supabase.from('households').select('*').eq('id', householdId).single()
+    const { data: mData } = await supabase.from('members').select('*').eq('user_id', user.id).single()
+    if (!hData || !mData) throw new Error('データの取得に失敗しました')
 
     setHousehold(hData)
     setMember(mData)
