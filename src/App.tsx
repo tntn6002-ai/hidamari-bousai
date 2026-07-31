@@ -8,6 +8,7 @@ import { Inventory } from './pages/Inventory'
 import { Plan } from './pages/Plan'
 import { Alerts } from './pages/Alerts'
 import { Hazard } from './pages/Hazard'
+import { Challenge } from './pages/Challenge'
 import { SignIn } from './pages/auth/SignIn'
 import { Onboarding } from './pages/auth/Onboarding'
 import { REQ, REQ_KEYS } from './lib/constants'
@@ -189,6 +190,9 @@ function AppInner() {
       )}
       {tab === 'hazard' && (
         <Hazard bases={bases} onUpdateBase={onUpdateBase} />
+      )}
+      {tab === 'game' && (
+        <Challenge bases={bases} items={items} />
       )}
       {draft && (
         <ItemForm draft={draft} setDraft={setDraft} bases={bases} onSave={saveDraft} />

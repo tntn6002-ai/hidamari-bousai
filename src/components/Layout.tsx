@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Home, Package, ClipboardList, Bell, Map, UserPlus } from 'lucide-react'
+import { Home, Package, ClipboardList, Bell, Map, UserPlus, Trophy } from 'lucide-react'
 import { InviteModal } from './InviteModal'
 import type { TabId } from '../types'
 
@@ -9,6 +9,7 @@ const NAV_ITEMS: { id: TabId; label: string; Icon: React.ComponentType<{ size?: 
   { id: 'plan',   label: '計画',       Icon: ClipboardList },
   { id: 'alert',  label: 'アラート',   Icon: Bell },
   { id: 'hazard', label: 'ハザード',   Icon: Map },
+  { id: 'game',   label: 'チャレンジ', Icon: Trophy },
 ]
 
 const PAGE_TITLE: Record<TabId, string> = {
@@ -17,6 +18,7 @@ const PAGE_TITLE: Record<TabId, string> = {
   plan:   '備蓄計画',
   alert:  'アラート',
   hazard: 'ハザード確認',
+  game:   'チャレンジ',
 }
 
 interface LayoutProps {
@@ -128,7 +130,7 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
 
       {/* ── Mobile/tablet bottom nav ── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-orange-100 safe-area-inset-bottom">
-        <div className="grid grid-cols-5 max-w-2xl mx-auto">
+        <div className="grid grid-cols-6 max-w-2xl mx-auto">
           {NAV_ITEMS.map(({ id, label, Icon }) => (
             <button
               key={id}

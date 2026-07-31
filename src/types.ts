@@ -56,4 +56,4 @@ export interface ItemDraft {
   url: string
 }
 
-export type TabId = 'home' | 'inv' | 'plan' | 'alert' | 'hazard'
+export type TabId = 'home' | 'inv' | 'plan' | 'alert' | 'hazard' | 'game'
