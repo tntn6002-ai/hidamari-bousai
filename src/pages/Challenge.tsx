@@ -15,6 +15,7 @@ export function Challenge({ bases, items }: ChallengeProps) {
   const [pick, setPick] = useState<number | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [order] = useState(() => [...QUIZZES].sort(() => Math.random() - 0.5))
+  const [celebrate, setCelebrate] = useState<number | null>(null)
 
   const quizDoneCount = Object.keys(g.quizDone).length
   const badges = computeBadges(bases, items, { quizScore: g.quizScore, quizDoneCount, streakCount: g.streakCount })
@@ -48,7 +49,16 @@ export function Challenge({ bases, items }: ChallengeProps) {
   }, [bases, items, g.quizScore, g.streakCount])
 
   const already = checkedInToday(g)
-  const doCheckIn = () => setG(prev => { const next = checkIn(prev); saveGame(next); return next })
+  const doCheckIn = () => {
+    if (already) return
+    const next = checkIn(g)
+    saveGame(next)
+    setG(next)
+    setCelebrate(next.streakCount)
+    window.setTimeout(() => setCelebrate(null), 1900)
+  }
+  const milestoneMsg = (n: number) =>
+    n >= 30 ? ' 1か月達成！🏆' : n >= 14 ? ' 2週間！' : n >= 7 ? ' 1週間達成！⚡' : n >= 3 ? ' その調子！' : ''
   const pickRole = (r: string) => setG(prev => { const next = { ...prev, role: prev.role === r ? null : r }; saveGame(next); return next })
 
   const answer = (i: number) => {
@@ -65,6 +75,32 @@ export function Challenge({ bases, items }: ChallengeProps) {
 
   return (
     <div className="px-4 lg:px-8 py-5 max-w-3xl mx-auto space-y-5">
+      <style>{`
+        @keyframes ci-fade { 0%{opacity:0} 12%{opacity:1} 78%{opacity:1} 100%{opacity:0} }
+        @keyframes ci-pop { 0%{transform:scale(.2) rotate(-10deg);opacity:0} 45%{transform:scale(1.2) rotate(6deg);opacity:1} 70%{transform:scale(.92) rotate(-3deg)} 100%{transform:scale(1) rotate(0)} }
+        @keyframes ci-float { 0%{transform:translateY(10px) scale(.5);opacity:0} 25%{opacity:1} 100%{transform:translateY(-130px) scale(1.15);opacity:0} }
+        .ci-overlay{ animation: ci-fade 1.9s ease forwards }
+        .ci-pop{ animation: ci-pop .7s cubic-bezier(.2,1.4,.4,1) }
+        .ci-spark{ position:absolute; bottom:42%; font-size:1.4rem; animation: ci-float 1.6s ease-out forwards }
+        @media (prefers-reduced-motion: reduce){ .ci-pop{ animation:none } .ci-spark{ display:none } }
+      `}</style>
+
+      {celebrate !== null && (
+        <div className="ci-overlay fixed inset-0 z-40 pointer-events-none flex items-center justify-center">
+          {[0, 1, 2, 3, 4, 5].map(i => (
+            <span key={i} className="ci-spark" style={{ left: `${18 + i * 12}%`, animationDelay: `${i * 90}ms` }}>
+              {i % 2 ? '✨' : '🔥'}
+            </span>
+          ))}
+          <div className="ci-pop text-center">
+            <div className="text-6xl">🔥</div>
+            <p className="mt-2 text-base font-bold text-amber-700 bg-white/95 rounded-full px-5 py-2 shadow-lg">
+              {celebrate}日連続！{milestoneMsg(celebrate)}
+            </p>
+          </div>
+        </div>
+      )}
+
       <p className="text-sm text-stone-500">遊びながら、家族の備えを育てましょう ☀️</p>
 
       {/* 備えレベル */}
