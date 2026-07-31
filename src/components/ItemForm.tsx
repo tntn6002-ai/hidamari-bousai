@@ -14,6 +14,15 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
   const set = (patch: Partial<ItemDraft>) => setDraft({ ...draft, ...patch })
   const canSave = draft.name.trim().length > 0
 
+  // よく使う備蓄のワンタップ・テンプレ（品名・種類・数量を一括入力）
+  const QUICK: { label: string; name: string; reqKey: ReqKey; qty: number }[] = [
+    { label: '水 2L×6', name: '保存水 2L×6本', reqKey: 'water', qty: 12 },
+    { label: '主食（ご飯）', name: 'レトルトご飯', reqKey: 'food', qty: 6 },
+    { label: '携帯トイレ', name: '携帯トイレ', reqKey: 'toilet', qty: 50 },
+    { label: 'カセットボンベ', name: 'カセットボンベ', reqKey: 'gas', qty: 12 },
+    { label: '犬フード', name: '犬フード', reqKey: 'dogfood', qty: 7 },
+  ]
+
   return (
     <div
       className="fixed inset-0 bg-black/40 z-30 flex items-end lg:items-center justify-center p-0 lg:p-4"
@@ -29,6 +38,24 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
             <X size={18} />
           </button>
         </div>
+
+        {!draft.id && (
+          <div className="space-y-2">
+            <p className="text-xs text-stone-500">よく使うものから選ぶと早いです（あとで数量は調整できます）</p>
+            <div className="flex flex-wrap gap-1.5">
+              {QUICK.map(q => (
+                <button
+                  key={q.label}
+                  type="button"
+                  onClick={() => set({ name: q.name, reqKey: q.reqKey, qty: q.qty })}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors"
+                >
+                  ＋ {q.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="text-xs text-stone-500 sm:col-span-2">
@@ -82,7 +109,7 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
           </label>
 
           <label className="text-xs text-stone-500">
-            賞味・使用期限
+            賞味・使用期限（任意）
             <input
               type="date"
               value={draft.expiry}
@@ -93,7 +120,7 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
           </label>
 
           <label className="text-xs text-stone-500">
-            保管場所
+            保管場所（任意）
             <input
               value={draft.place}
               onChange={e => set({ place: e.target.value })}
@@ -103,7 +130,7 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
           </label>
 
           <label className="text-xs text-stone-500 sm:col-span-2">
-            商品URL（次回そこへ直行）
+            商品URL（任意・次回そこへ直行）
             <input
               value={draft.url}
               onChange={e => set({ url: e.target.value })}
@@ -113,6 +140,7 @@ export function ItemForm({ draft, setDraft, bases, onSave }: ItemFormProps) {
           </label>
         </div>
 
+        <p className="text-xs text-stone-500">必須は<span className="font-semibold text-stone-600">品名と数量</span>だけ。ほかは空でも保存できます。</p>
         <button
           onClick={onSave}
           disabled={!canSave}

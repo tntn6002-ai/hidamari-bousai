@@ -25,6 +25,7 @@ export function Home({ bases, items, setTab }: HomeProps) {
   }, 0)
 
   const totalAlerts = expiryAlertCount + shortageCount
+  const allReady = bases.length > 0 && items.length > 0 && bases.every(b => baseSummary(items, b).pct >= 1)
 
   return (
     <div className="px-4 lg:px-8 py-5 max-w-5xl mx-auto space-y-5">
@@ -33,6 +34,12 @@ export function Home({ bases, items, setTab }: HomeProps) {
         <span className="font-semibold text-stone-700">「いま何日ぶん備えられているか」</span>。
         リングが目標日数に届けば、その家は在宅避難の準備完了です。
       </p>
+
+      {allReady && (
+        <div className="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-800 text-sm font-bold">
+          🎉 すべての家が準備OK！この調子で続けましょう。
+        </div>
+      )}
 
       {totalAlerts > 0 && (
         <button
@@ -70,9 +77,12 @@ export function Home({ bases, items, setTab }: HomeProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-0.5 flex-wrap">
                   <h2 className="font-bold text-base">{b.name}</h2>
-                  <span className="text-[11px] text-stone-400">{b.tag}</span>
+                  <span className="text-xs text-stone-500">{b.tag}</span>
+                  {s.pct >= 1 && (
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">準備OK</span>
+                  )}
                 </div>
-                <p className="text-[11px] text-stone-400 mb-2">
+                <p className="text-xs text-stone-500 mb-2">
                   目標 {b.days}日 ・ 大人{b.adults}
                   {b.dogs > 0 ? ` ・ 犬${b.dogs}` : ''}
                   {baseAlerts > 0 && (
@@ -96,20 +106,26 @@ export function Home({ bases, items, setTab }: HomeProps) {
         })}
       </div>
 
-      <p className="text-[11px] text-stone-400 leading-relaxed">
+      <p className="text-xs text-stone-500 leading-relaxed">
         計算根拠：大人1人1日＝水3L・3食・トイレ5回、カセットボンベ約6本/週（2人）、犬1匹1日＝水0.5L・フード1日分・シーツ3枚（目安）。リングは水・主食・トイレのうち最少の日数。
       </p>
 
       {items.length === 0 && (
-        <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 text-center">
-          <Sun size={28} className="mx-auto text-amber-400 mb-2" />
-          <p className="text-sm font-semibold text-amber-800">在庫がまだ登録されていません</p>
-          <p className="text-xs text-amber-600 mt-1">「在庫」タブから備蓄品を追加してみましょう</p>
+        <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 space-y-4">
+          <div className="text-center">
+            <Sun size={28} className="mx-auto text-amber-400 mb-2" />
+            <p className="text-sm font-bold text-amber-800">ようこそ！まずは備蓄を1つ登録しましょう</p>
+          </div>
+          <ol className="text-xs text-amber-800 space-y-1.5">
+            <li><span className="font-bold">1.</span>「在庫」タブで水や食料を登録</li>
+            <li><span className="font-bold">2.</span>「ホーム」で“あと何日分”を確認</li>
+            <li><span className="font-bold">3.</span>「アラート」で不足・期限をチェック</li>
+          </ol>
           <button
             onClick={() => setTab('inv')}
-            className="mt-3 px-5 py-2 rounded-xl bg-amber-400 text-white text-sm font-bold hover:bg-amber-500 transition-colors"
+            className="w-full py-2.5 rounded-xl bg-amber-400 text-white text-sm font-bold hover:bg-amber-500 transition-colors"
           >
-            在庫を追加する
+            まず水を1本 登録する
           </button>
         </div>
       )}

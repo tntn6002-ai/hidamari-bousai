@@ -1,4 +1,4 @@
-import type { Base, ReqKey } from '../types'
+import type { ReqKey } from '../types'
 
 // 東京都「日常備蓄推進リーフレット」令和7年10月版 4人家族3日分 + 内閣府ガイドライン準拠
 export const REQ: Record<ReqKey, {
@@ -149,13 +149,6 @@ export const REQ_GROUPS: { id: string; label: string }[] = [
   { id: 'toilet', label: 'トイレ' },
   { id: 'energy', label: 'エネルギー' },
   { id: 'pet',    label: 'ペット' },
-]
-
-export const SEED_BASES: Base[] = [
-  { id: 'b1', name: '関西の自宅',  tag: '戸建て・犬1',      adults: 2, dogs: 1, days: 14 },
-  { id: 'b2', name: '長女宅',      tag: '東京・2階',        adults: 1, dogs: 0, days: 7  },
-  { id: 'b3', name: '次女宅',      tag: '東京・2階・犬1',   adults: 2, dogs: 1, days: 7  },
-  { id: 'b4', name: '三女宅',      tag: '川崎・1階',        adults: 2, dogs: 0, days: 7  },
 ]
 
 export const STORAGE_KEY = 'hidamari-bousai-v1'

@@ -75,7 +75,7 @@ export function Alerts({ bases, items, openAdd, onReset }: AlertsProps) {
               </div>
             )
           })}
-          <p className="text-[11px] text-stone-400 px-1">
+          <p className="text-xs text-stone-500 px-1">
             食べたら在庫タブで「−」を。ローリングストックの回し時です。
           </p>
         </section>
@@ -119,7 +119,7 @@ export function Alerts({ bases, items, openAdd, onReset }: AlertsProps) {
       )}
 
       <div className="pt-2 border-t border-orange-100">
-        <p className="text-[11px] text-stone-400 mb-3 leading-relaxed">
+        <p className="text-xs text-stone-500 mb-3 leading-relaxed">
           ※ハザード表示は公的オープンデータの再表示であり、最終確認は各自治体の公式資料で。備蓄係数は公的ガイド由来の目安。
         </p>
         <button
