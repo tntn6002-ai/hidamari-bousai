@@ -51,7 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
     Icon: MoreHorizontal,
     tabs: [
       { id: 'game', label: 'チャレンジ' },
-      { id: 'video', label: '動画リンク' },
+      { id: 'links', label: 'リンク集' },
     ],
   },
 ]
@@ -73,5 +73,5 @@ export const PAGE_TITLE: Record<TabId, string> = {
   firstaid: '発災直後の初動',
   commute: '職場・帰宅',
   game: 'チャレンジ',
-  video: '動画リンク',
+  links: 'リンク集',
 }

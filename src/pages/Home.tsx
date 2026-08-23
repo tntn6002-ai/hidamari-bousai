@@ -5,7 +5,9 @@ import { Accordion } from '../components/Accordion'
 import { REQ, REQ_KEYS } from '../lib/constants'
 import { baseSummary, dailyNeed, stockOf, requiredQty, daysUntil } from '../lib/calculations'
 import { SAFETY_ACTIONS, SAFETY_GROUPS, TOILET_STEPS, TOILET_WHY, TOILET_SUPPLIES } from '../lib/knowledge'
-import { useLocalSet, useLocalList, youtubeId, thumbnailUrl, VIDEO_KEY, type VideoLink } from '../lib/localList'
+import { useLocalSet } from '../lib/localList'
+import { useLinks } from '../contexts/LinksContext'
+import { youtubeId, thumbnailUrl } from '../lib/links'
 import type { Base, Item, TabId } from '../types'
 
 interface HomeProps {
@@ -16,7 +18,7 @@ interface HomeProps {
 
 export function Home({ bases, items, setTab }: HomeProps) {
   const [doneActions, toggleAction] = useLocalSet('hidamari-safety-actions')
-  const [videos] = useLocalList<VideoLink>(VIDEO_KEY)
+  const { curated, mine } = useLinks()
 
   const expiryAlertCount = items.filter(it => {
     const d = daysUntil(it.expiry)
@@ -39,6 +41,9 @@ export function Home({ bases, items, setTab }: HomeProps) {
   // 携帯トイレの充足状況（非常トイレの説明と結びつける）
   const toiletNeed = bases.reduce((s, b) => s + requiredQty(b, 'toilet'), 0)
   const toiletHave = bases.reduce((s, b) => s + stockOf(items, b.id, 'toilet'), 0)
+
+  const publishedCurated = curated.filter(c => c.published)
+  const linkCount = publishedCurated.length + mine.length
 
   const homeBases = bases.filter(b => b.baseType !== 'work')
   const locatedCount = bases.filter(b => b.lat && b.lon).length
@@ -215,15 +220,19 @@ export function Home({ bases, items, setTab }: HomeProps) {
         </div>
       </Accordion>
 
-      {/* ⑤ 動画 ────────────────────────────────── */}
+      {/* ⑤ 動画・リンク ────────────────────────── */}
       <Accordion
         title="覚えておきたい動画"
-        subtitle={videos.length ? `${videos.length}本` : 'まだ登録がありません'}
+        subtitle={
+          linkCount
+            ? `おすすめ${publishedCurated.length}本${mine.length ? ` ・ 自分のメモ${mine.length}本` : ''}`
+            : 'まだ登録がありません'
+        }
         Icon={Play}
-        defaultOpen={videos.length > 0}
+        defaultOpen={linkCount > 0}
       >
         <div className="pt-2 space-y-2">
-          {videos.slice(0, 3).map(v => {
+          {[...publishedCurated, ...mine].slice(0, 3).map(v => {
             const vid = youtubeId(v.url)
             return (
               <a
@@ -248,10 +257,10 @@ export function Home({ bases, items, setTab }: HomeProps) {
             )
           })}
           <button
-            onClick={() => setTab('video')}
+            onClick={() => setTab('links')}
             className="w-full py-2 rounded-xl border border-dashed border-amber-300 text-amber-600 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-amber-50 transition-colors"
           >
-            <Plus size={13} /> {videos.length > 3 ? `すべて見る（${videos.length}本）` : '動画を追加する'}
+            <Plus size={13} /> {linkCount > 3 ? `リンク集をすべて見る（${linkCount}本）` : 'リンク集を開く'}
           </button>
         </div>
       </Accordion>

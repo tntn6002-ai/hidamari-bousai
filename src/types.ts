@@ -67,7 +67,7 @@ export type TabId =
   | 'firstaid'
   | 'commute'
   | 'game'
-  | 'video'
+  | 'links'
 
 /** 下タブ／サイドの大分類。各グループが複数の TabId を束ねる。 */
 export type GroupId = 'home' | 'prep' | 'learn' | 'act' | 'more'

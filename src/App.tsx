@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Sun } from 'lucide-react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { LinksProvider } from './contexts/LinksContext'
 import { Layout } from './components/Layout'
 import { ItemForm } from './components/ItemForm'
 import { Home } from './pages/Home'
@@ -12,7 +13,7 @@ import { Shelters } from './pages/Shelters'
 import { FirstAid } from './pages/FirstAid'
 import { Gear } from './pages/Gear'
 import { Commute } from './pages/Commute'
-import { Videos } from './pages/Videos'
+import { Links } from './pages/Links'
 import { Challenge } from './pages/Challenge'
 import { SignIn } from './pages/auth/SignIn'
 import { Onboarding } from './pages/auth/Onboarding'
@@ -173,7 +174,8 @@ function AppInner() {
   if (dbLoading) return <Loading label="備えを読み込んでいます…" />
 
   return (
-    <Layout tab={tab} setTab={setTab} alertCount={alertCount} saveState={saveState}>
+    <LinksProvider>
+      <Layout tab={tab} setTab={setTab} alertCount={alertCount} saveState={saveState}>
       {tab === 'home' && <Home bases={bases} items={items} setTab={setTab} />}
       {tab === 'inv' && (
         <Inventory
@@ -203,14 +205,15 @@ function AppInner() {
       {tab === 'commute' && (
         <Commute bases={bases} onUpdateBase={onUpdateBase} setTab={setTab} />
       )}
-      {tab === 'video' && <Videos />}
+      {tab === 'links' && <Links />}
       {tab === 'game' && (
         <Challenge bases={bases} items={items} />
       )}
-      {draft && (
-        <ItemForm draft={draft} setDraft={setDraft} bases={bases} onSave={saveDraft} />
-      )}
-    </Layout>
+        {draft && (
+          <ItemForm draft={draft} setDraft={setDraft} bases={bases} onSave={saveDraft} />
+        )}
+      </Layout>
+    </LinksProvider>
   )
 }
 

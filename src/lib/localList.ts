@@ -54,31 +54,3 @@ export function useLocalSet(key: string): [Set<string>, (id: string) => void] {
 
   return [set, toggle]
 }
-
-export const VIDEO_KEY = 'hidamari-video-links'
-
-export interface VideoLink {
-  id: string
-  title: string
-  url: string
-  note: string
-}
-
-/** YouTube の動画IDを取り出す。取れなければ null（サムネイルを出さないだけ）。 */
-export function youtubeId(url: string): string | null {
-  try {
-    const u = new URL(url)
-    if (u.hostname === 'youtu.be') return u.pathname.slice(1) || null
-    if (u.hostname.endsWith('youtube.com')) {
-      const v = u.searchParams.get('v')
-      if (v) return v
-      const m = u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/)
-      if (m) return m[1]
-    }
-    return null
-  } catch {
-    return null
-  }
-}
-
-export const thumbnailUrl = (videoId: string) => `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`
