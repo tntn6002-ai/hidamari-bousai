@@ -8,7 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 黙って切り替えず、利用者に「更新しますか」を出してから反映する
+      registerType: 'prompt',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'ひだまり防災ボード',

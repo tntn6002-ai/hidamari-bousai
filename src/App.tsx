@@ -3,6 +3,7 @@ import { Sun } from 'lucide-react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { LinksProvider } from './contexts/LinksContext'
 import { Layout } from './components/Layout'
+import { UpdatePrompt } from './components/UpdatePrompt'
 import { ItemForm } from './components/ItemForm'
 import { Home } from './pages/Home'
 import { Inventory } from './pages/Inventory'
@@ -221,6 +222,7 @@ export default function App() {
   return (
     <AuthProvider>
       <AppInner />
+      <UpdatePrompt />
     </AuthProvider>
   )
 }
