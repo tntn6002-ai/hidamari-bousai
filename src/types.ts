@@ -56,4 +56,18 @@ export interface ItemDraft {
   url: string
 }
 
-export type TabId = 'home' | 'inv' | 'plan' | 'alert' | 'hazard' | 'game'
+export type TabId =
+  | 'home'
+  | 'inv'
+  | 'plan'
+  | 'alert'
+  | 'gear'
+  | 'hazard'
+  | 'shelter'
+  | 'firstaid'
+  | 'commute'
+  | 'game'
+  | 'video'
+
+/** 下タブ／サイドの大分類。各グループが複数の TabId を束ねる。 */
+export type GroupId = 'home' | 'prep' | 'learn' | 'act' | 'more'

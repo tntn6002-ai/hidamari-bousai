@@ -1,25 +1,9 @@
 import { useState } from 'react'
-import { Home, Package, ClipboardList, Bell, Map, UserPlus, Trophy } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { InviteModal } from './InviteModal'
+import { SubTabs } from './SubTabs'
+import { NAV_GROUPS, PAGE_TITLE, firstTabOf, groupOf } from '../lib/nav'
 import type { TabId } from '../types'
-
-const NAV_ITEMS: { id: TabId; label: string; Icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
-  { id: 'home',   label: 'ホーム',     Icon: Home },
-  { id: 'inv',    label: '在庫',       Icon: Package },
-  { id: 'plan',   label: '計画',       Icon: ClipboardList },
-  { id: 'alert',  label: 'アラート',   Icon: Bell },
-  { id: 'hazard', label: 'ハザード',   Icon: Map },
-  { id: 'game',   label: 'チャレンジ', Icon: Trophy },
-]
-
-const PAGE_TITLE: Record<TabId, string> = {
-  home:   'ホーム',
-  inv:    '在庫管理',
-  plan:   '備蓄計画',
-  alert:  'アラート',
-  hazard: 'ハザード確認',
-  game:   'チャレンジ',
-}
 
 interface LayoutProps {
   tab: TabId
@@ -29,8 +13,16 @@ interface LayoutProps {
   children: React.ReactNode
 }
 
+/** アラート件数を出すのは「そなえる」グループ（中身は不足・期限） */
+const BADGE_GROUP = 'prep'
+
 export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutProps) {
   const [showInvite, setShowInvite] = useState(false)
+  const group = groupOf(tab)
+
+  const saveLabel =
+    saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : saveState === 'error' ? '保存エラー' : ''
+
   return (
     <div className="min-h-screen bg-[#FBF0DA] text-stone-800">
 
@@ -44,32 +36,46 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
           </div>
         </div>
 
-        <nav className="flex-1 py-3">
-          {NAV_ITEMS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition-colors relative ${
-                tab === id
-                  ? 'text-amber-600 font-bold bg-amber-50 border-r-2 border-amber-400'
-                  : 'text-stone-500 hover:bg-orange-50 hover:text-stone-700'
-              }`}
-            >
-              <div className="relative">
-                <Icon size={18} strokeWidth={tab === id ? 2.4 : 1.8} />
-                {id === 'alert' && alertCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[8px] font-bold flex items-center justify-center">
-                    {alertCount > 9 ? '9+' : alertCount}
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {NAV_GROUPS.map(g => (
+            <div key={g.id} className="mb-1">
+              <button
+                onClick={() => setTab(firstTabOf(g.id))}
+                className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+                  group === g.id
+                    ? 'text-amber-600 font-bold bg-amber-50 border-r-2 border-amber-400'
+                    : 'text-stone-500 hover:bg-orange-50 hover:text-stone-700'
+                }`}
+              >
+                <g.Icon size={18} strokeWidth={group === g.id ? 2.4 : 1.8} />
+                <span>{g.label}</span>
+                {g.id === BADGE_GROUP && alertCount > 0 && (
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold">
+                    {alertCount}
                   </span>
                 )}
-              </div>
-              <span>{label}</span>
-              {id === 'alert' && alertCount > 0 && (
-                <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold">
-                  {alertCount}
-                </span>
+              </button>
+
+              {/* 展開中グループの中のページ */}
+              {group === g.id && g.tabs.length > 1 && (
+                <div className="pb-1">
+                  {g.tabs.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setTab(t.id)}
+                      className={`w-full text-left pl-14 pr-5 py-1.5 text-xs transition-colors ${
+                        tab === t.id ? 'text-amber-600 font-bold' : 'text-stone-400 hover:text-stone-600'
+                      }`}
+                    >
+                      {t.label}
+                      {t.id === 'alert' && alertCount > 0 && (
+                        <span className="ml-1.5 text-red-500 font-bold">{alertCount}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               )}
-            </button>
+            </div>
           ))}
         </nav>
 
@@ -81,13 +87,9 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
             <UserPlus size={15} /> 招待する
           </button>
           <p className="text-[10px] text-stone-400 leading-relaxed">
-            ※ハザード表示は公的データの再表示。最終確認は各自治体の公式資料で。
+            ※ハザード・避難所の表示は公的データの再表示。最終確認は各自治体の公式資料で。
           </p>
-          {saveState && (
-            <p className="text-[10px] mt-1 text-stone-400 tabular-nums">
-              {saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : '保存エラー'}
-            </p>
-          )}
+          {saveLabel && <p className="text-[10px] mt-1 text-stone-400 tabular-nums">{saveLabel}</p>}
         </div>
       </aside>
 
@@ -102,9 +104,7 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
               <h1 className="font-bold text-base leading-tight">ひだまり防災ボード</h1>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-stone-400 tabular-nums">
-                {saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : saveState === 'error' ? '保存エラー' : ''}
-              </span>
+              <span className="text-xs text-stone-400 tabular-nums">{saveLabel}</span>
               <button onClick={() => setShowInvite(true)} className="p-1.5 rounded-lg text-stone-400 hover:text-amber-500 hover:bg-orange-50">
                 <UserPlus size={18} />
               </button>
@@ -115,10 +115,13 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
         {/* Desktop page header */}
         <header className="hidden lg:flex sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-orange-100 px-8 py-4 items-center justify-between">
           <h2 className="font-bold text-xl">{PAGE_TITLE[tab]}</h2>
-          <span className="text-xs text-stone-400 tabular-nums">
-            {saveState === 'saving' ? '保存中…' : saveState === 'saved' ? '保存済み ✓' : saveState === 'error' ? '保存エラー' : ''}
-          </span>
+          <span className="text-xs text-stone-400 tabular-nums">{saveLabel}</span>
         </header>
+
+        {/* グループ内のページ切り替え（モバイル中心。デスクトップはサイドにも出る） */}
+        <div className="lg:hidden">
+          <SubTabs group={group} tab={tab} setTab={setTab} alertCount={alertCount} />
+        </div>
 
         {/* Page content */}
         <main className="flex-1 pb-24 lg:pb-10">
@@ -128,21 +131,21 @@ export function Layout({ tab, setTab, alertCount, saveState, children }: LayoutP
 
       {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
 
-      {/* ── Mobile/tablet bottom nav ── */}
+      {/* ── Mobile/tablet bottom nav（5グループ）── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-orange-100 safe-area-inset-bottom">
-        <div className="grid grid-cols-6 max-w-2xl mx-auto">
-          {NAV_ITEMS.map(({ id, label, Icon }) => (
+        <div className="grid grid-cols-5 max-w-2xl mx-auto">
+          {NAV_GROUPS.map(g => (
             <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={`relative py-2.5 flex flex-col items-center gap-0.5 text-[10px] transition-colors ${
-                tab === id ? 'text-amber-600 font-bold' : 'text-stone-400'
+              key={g.id}
+              onClick={() => setTab(firstTabOf(g.id))}
+              className={`relative py-2.5 flex flex-col items-center gap-0.5 text-[11px] transition-colors ${
+                group === g.id ? 'text-amber-600 font-bold' : 'text-stone-400'
               }`}
             >
-              <Icon size={20} strokeWidth={tab === id ? 2.4 : 1.8} />
-              {label}
-              {id === 'alert' && alertCount > 0 && (
-                <span className="absolute top-1.5 left-1/2 ml-2 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+              <g.Icon size={21} strokeWidth={group === g.id ? 2.4 : 1.8} />
+              {g.label}
+              {g.id === BADGE_GROUP && alertCount > 0 && (
+                <span className="absolute top-1.5 left-1/2 ml-3 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
                   {alertCount > 99 ? '99+' : alertCount}
                 </span>
               )}

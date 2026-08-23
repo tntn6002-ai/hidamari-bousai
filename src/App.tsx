@@ -8,6 +8,11 @@ import { Inventory } from './pages/Inventory'
 import { Plan } from './pages/Plan'
 import { Alerts } from './pages/Alerts'
 import { Hazard } from './pages/Hazard'
+import { Shelters } from './pages/Shelters'
+import { FirstAid } from './pages/FirstAid'
+import { Gear } from './pages/Gear'
+import { Commute } from './pages/Commute'
+import { Videos } from './pages/Videos'
 import { Challenge } from './pages/Challenge'
 import { SignIn } from './pages/auth/SignIn'
 import { Onboarding } from './pages/auth/Onboarding'
@@ -183,14 +188,22 @@ function AppInner() {
           bases={bases} items={items}
           planBase={planBase || bases[0]?.id || ''} setPlanBase={setPlanBase}
           onUpdateBase={onUpdateBase} onAddBase={onAddBase} openAdd={openAdd}
+          setTab={setTab}
         />
       )}
       {tab === 'alert' && (
         <Alerts bases={bases} items={items} openAdd={openAdd} onReset={onReset} />
       )}
+      {tab === 'gear' && <Gear bases={bases} />}
       {tab === 'hazard' && (
         <Hazard bases={bases} onUpdateBase={onUpdateBase} />
       )}
+      {tab === 'shelter' && <Shelters bases={bases} setTab={setTab} />}
+      {tab === 'firstaid' && <FirstAid />}
+      {tab === 'commute' && (
+        <Commute bases={bases} onUpdateBase={onUpdateBase} setTab={setTab} />
+      )}
+      {tab === 'video' && <Videos />}
       {tab === 'game' && (
         <Challenge bases={bases} items={items} />
       )}

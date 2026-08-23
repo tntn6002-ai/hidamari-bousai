@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { Plus, Minus, Check, ExternalLink, Building2, Home } from 'lucide-react'
 import { REQ, REQ_KEYS, REQ_GROUPS } from '../lib/constants'
 import { dailyNeed, requiredQty, stockOf, amazonSearch } from '../lib/calculations'
-import { ChecklistSection } from '../components/ChecklistSection'
-import { WorkInfoSection } from '../components/WorkInfoSection'
-import type { Base, Item, ItemDraft, ReqKey } from '../types'
+import type { Base, Item, ItemDraft, ReqKey, TabId } from '../types'
 
 interface PlanProps {
   bases: Base[]
@@ -14,9 +12,10 @@ interface PlanProps {
   onUpdateBase: (id: string, patch: Partial<Base>) => void
   onAddBase: (name: string, baseType: 'home' | 'work', adults: number, days: number) => Promise<void>
   openAdd: (preset?: Partial<ItemDraft>) => void
+  setTab: (t: TabId) => void
 }
 
-export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, onAddBase, openAdd }: PlanProps) {
+export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, onAddBase, openAdd, setTab }: PlanProps) {
   const [showAddBase, setShowAddBase] = useState(false)
   const [newName, setNewName] = useState('')
   const [newType, setNewType] = useState<'home' | 'work'>('work')
@@ -298,10 +297,12 @@ export function Plan({ bases, items, planBase, setPlanBase, onUpdateBase, onAddB
         )
       })}
 
-      {b.baseType === 'work'
-        ? <WorkInfoSection base={b} onUpdate={updateBase} />
-        : <ChecklistSection baseId={b.id} />
-      }
+      <button
+        onClick={() => setTab(b.baseType === 'work' ? 'commute' : 'gear')}
+        className="w-full py-3 rounded-2xl border border-orange-200 bg-white text-sm text-stone-500 font-semibold hover:bg-orange-50 transition-colors"
+      >
+        {b.baseType === 'work' ? '職場・帰宅の準備を見る →' : '持ち物リストを見る →'}
+      </button>
     </div>
   )
 }
